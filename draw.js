@@ -70,11 +70,13 @@ drawword();
 document.addEventListener("click", getcolor, false);//選顏色
 document.addEventListener("click", getsize, false);//選大小
 document.addEventListener("mousedown", mouseDown);//畫畫結束
-document.addEventListener("mousemove", drawsqare);//正在畫
+document.addEventListener("mousemove", throttle(drawsqare, 10), false);//正在畫
 document.addEventListener("mouseup", mouseUp);//畫畫開始
 document.addEventListener("click", clear, false);//全清
 document.addEventListener("click", reload, false);//留圖片
 socket.on('drawing', senddata);
+  window.addEventListener('resize', onResize, false);
+  onResize();
 function component(width, height, color, x, y) //畫矩形
 {
     var width2 = width;
@@ -204,7 +206,7 @@ function drawsqare(e) {
     ctx.strokeStyle = color;
     ctx.lineWidth = size;
     ctx.stroke();
-
+	if (!emit) { return; }
     socket.emit('drawing', {
       x0: x0 ,
       y0: y0 ,
@@ -222,3 +224,18 @@ function drawImage(img, x, y, neww, newh) {//圖片顯示
    document.getElementById('imageData').href = dataUrl;
    ls.setItem('image', img.src);
 }
+  function throttle(callback, delay) {
+    var previousCall = new Date().getTime();
+    return function() {
+      var time = new Date().getTime();
+
+      if ((time - previousCall) >= delay) {
+        previousCall = time;
+        callback.apply(null, arguments);
+      }
+    };
+  }
+  function onResize() {
+    canvas.width = 1200;
+    canvas.height = 600;
+  }
