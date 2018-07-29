@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Socket.IO whiteboard</title>
+</head>
+<body>
+<canvas id="myCanvas" width="1200" height="600" style="border:2px solid #d3d3d3;">  <!--canvas的大小和預設值---->
+Your browser does not support the HTML5 canvas tag.</canvas>
+<form action="/somewhere/to/upload" enctype="multipart/form-data"><!--上傳圖片的表單-->
+<input id="uploadImage" type="file" name="photo" accept="image/*"/>
+</form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/draw.js"></script>
+</body>
+</html>
