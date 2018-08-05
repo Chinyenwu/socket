@@ -1,4 +1,4 @@
-var socket = io();
+var socket = io();//建立socket
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 //上傳圖片的程式
@@ -75,7 +75,7 @@ document.addEventListener("mousemove", throttle(drawsqare, 10), false);//正在�
 document.addEventListener("mouseup", mouseUp);//畫畫開始
 document.addEventListener("click", clear, false);//全清
 document.addEventListener("click", reload, false);//留圖片
-socket.on('drawing', senddata);
+socket.on('drawing', senddata);//把畫畫用的資料傳進用drawing把senddata包再一起
 
   window.addEventListener('resize', onResize, false);
   onResize();
@@ -195,10 +195,10 @@ function clear(e) {
     var yPosition = event.pageY;
 	if(xPosition > 60 && xPosition < 100 && yPosition > 300 && yPosition < 340)
 	{
-		ctx.clearRect(110, 0, c.width, c.height);	
-		socket.emit('pressed', 38);
+		ctx.clearRect(110, 0, c.width, c.height);
+		socket.emit('pressed', 38);//向server端的pressed送出一個開始清除的動作
 	}
-		socket.on('PlayersMoving', function(key){
+		socket.on('PlayersMoving', function(key){//所有畫面一起清除
 		ctx.clearRect(110, 0, c.width, c.height);	
 		});
 }
@@ -214,7 +214,7 @@ function clear(e) {
     ctx.lineWidth = size;
     ctx.stroke();
 	if (!emit) { return; }
-    socket.emit('drawing', {
+    socket.emit('drawing', {//把畫畫用的資料傳進server端的drawing裡
       x0: x0 ,
       y0: y0 ,
       x1: x1 ,
