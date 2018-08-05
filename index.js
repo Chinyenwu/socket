@@ -14,18 +14,6 @@ function onConnection(socket){
             socket.broadcast.emit('PlayersMoving', key);//收到訊息後把清除的資料廣播到client端
     });
 	console.log(roomno);
-	/*
-    socket.on('presseded', function(key1){
-        if(key === 40){
-			var players = key1;
-			console.log(players );
-            socket.emit('PlayersMovinging', key1);
-			console.log('No');
-            socket.broadcast.emit('PlayersMovinging', key1);
-			console.log('Yes');
-        } 
-    });	
-	*/
 }
 io.on('connection', onConnection);
 
