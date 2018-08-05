@@ -28,6 +28,7 @@ var ls = window.localStorage,
     var y = (c.height - newh) / 2;  
     drawImage(img, x, y, neww, newh);
 	};
+
 	photo.addEventListener('change', function() {
     var file = this.files[0];  
     return file && fileReader.readAsDataURL(file); 
@@ -75,6 +76,7 @@ document.addEventListener("mouseup", mouseUp);//畫畫開始
 document.addEventListener("click", clear, false);//全清
 document.addEventListener("click", reload, false);//留圖片
 socket.on('drawing', senddata);
+
   window.addEventListener('resize', onResize, false);
   onResize();
 function component(width, height, color, x, y) //畫矩形
@@ -168,14 +170,6 @@ function getsize(e) {
 	}
 	return size1;
 }
-function clear(e) {
-    var xPosition = event.pageX;
-    var yPosition = event.pageY;
-	if(xPosition > 60 && xPosition < 100 && yPosition > 300 && yPosition < 340)
-	{
-		ctx.clearRect(110, 0, c.width, c.height);
-	}
-}
 function mouseDown(e) {
 	current.x = event.pageX;
     current.y = event.pageY;
@@ -196,6 +190,19 @@ function drawsqare(e) {
     current.y = event.pageY;
 	}
 }
+function clear(e) {
+    var xPosition = event.pageX;
+    var yPosition = event.pageY;
+	if(xPosition > 60 && xPosition < 100 && yPosition > 300 && yPosition < 340)
+	{
+		ctx.clearRect(110, 0, c.width, c.height);	
+		socket.emit('pressed', 38);
+	}
+		socket.on('PlayersMoving', function(key){
+		ctx.clearRect(110, 0, c.width, c.height);	
+		});
+}
+
  function senddata(data){
 	drawLine(data.x0 , data.y0 , data.x1 , data.y1 , data.color ,data.size);
  }
