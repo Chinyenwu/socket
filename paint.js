@@ -11,6 +11,8 @@ var clearRect = false;
 var state2;
 var roomName2;
 var username2;
+var list2=[] ;
+var i;
 //上傳圖片的程式
 var ls = window.localStorage,
   photo = document.getElementById('uploadImage'),
@@ -113,10 +115,21 @@ function getcolor(e) {
     socket.on('Room2', function(state,roomName,username){//所有畫面一起清除
 		state2=state;
 		roomName2=roomName;
-		username2=username;
-		console.log(username2+" "+state2+" "+roomName2);
+		username2=username;	
+		console.log(username2+" "+state2+" "+roomName2);	
+	});
+	socket.emit('roomlist', 38);
+	socket.on('Roomlist', function(roomidlist){
+		list2 = roomidlist;
+		console.log(list2);
+		/*
+		for(i=0;i<roomidlist.length;i++){
+			
+		}
+		*/
 	});
 	console.log(username2+" "+state2+" "+roomName2);
+	console.log(list2);
   return colorT;
 }
 
@@ -166,6 +179,8 @@ function onMouseMove(e){
   drawLine(data.x0 , data.y0 , data.x1 , data.y1 , data.color ,data.size);
  }
 socket.on('drawing', senddata);
+
+console.log(list2);
 function drawLine(x0, y0, x1, y1, colorP, size, emit){
 	//if(state2=='Create'){
     ctx.beginPath();
@@ -177,15 +192,17 @@ function drawLine(x0, y0, x1, y1, colorP, size, emit){
     ctx.lineWidth = size;
     ctx.stroke();
 	//}
-  if (!emit) { return; }
-    socket.emit('drawing', {
-      x0: x0 ,
-      y0: y0 ,
-      x1: x1 ,
-      y1: y1 ,
-      color: colorP,
-      size:size,
-    });
+		if (!emit) { return; }
+		socket.emit('certain', roomName2);
+		socket.emit('drawing', {
+		x0: x0 ,
+		y0: y0 ,
+		x1: x1 ,
+		y1: y1 ,
+		color: colorP,
+		size:size,
+		},roomName2);
+	console.log(roomName2);	
   }
 /*
 function mouseMove(e) {
