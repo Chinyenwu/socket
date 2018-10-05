@@ -1,11 +1,11 @@
-const express = require('express');
+var express = require('express');
 
-const app = express();
+var app = express();
 // add socket
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 //
-const port = 3232;
+var port = process.env.PORT ||3232;
 
 // Set public folder as root
 app.use(express.static('public'));
@@ -20,43 +20,40 @@ app.use((req, res) => res.sendFile(`${__dirname}/public/index.html`));
 // add socket
 
 var roomidlist =[];
-var roomidlistrue =[];
+var themelist =[];
 var statelist =[];
 var userlist =[];
 var max=1;
-var roomno = 1;
+
+//var roomno = 1;
 var i;
 
 io.on('connection', function (socket){
 	var curRoomName  = "大廳";
+	var room2;
+	
     socket.on('certain', function(roomName){
 		curRoomName = roomName;
     });	
+	
 	socket.join(curRoomName);
-	socket.on('drawing',function(data,list) {
-		io.in(curRoomName).emit('drawing', data);
-		console.log(io.sockets.adapter.rooms[curRoomName]);
-		//console.log(list);
-		console.log(curRoomName);
-	});
-    socket.on('pressed', function(key){
-		io.in(curRoomName).emit('PlayersMoving', key);//收到訊息後把清除的資料廣播到client端
-    });
 	socket.on('roomlist', function(key){
 		io.emit('Roomlist', roomidlist);//收到訊息後把清除的資料廣播到client端
     });
-	socket.on('roomstate', function(state,roomName,username){
+	socket.on('roomstate', function(state,roomName,username,theme){
         //socket.emit('Room', state,roomName,username);//收到訊息後把清除的資料廣播到client端
 		statelist.push(state);
 		userlist.push(username);
-		socket.leave(curRoomName);
+		socket.leave("大廳");
 		for(i=0;i<=max;i++){
 			if(roomidlist[i]==roomName){
 				break;
 				}
 			else if(i==max-1){
 				roomidlist.push(roomName);
+				themelist.push(theme);
 				max=max+1;
+				io.emit('Roomlist2', roomidlist);
 				break;
 			}
 		}
@@ -64,23 +61,25 @@ io.on('connection', function (socket){
 		io.in(roomName).emit('Room2', state,roomName,username);
 		curRoomName = roomName;
 		console.log(io.sockets.adapter.rooms[curRoomName]);
-		console.log(max-1);
-		console.log(roomidlist);
-		/*
-		for(i=0;i<max-1;i++){
-			console.log(io.sockets.adapter.rooms[roomidlist[i]]);
-		}
-		console.log(io.sockets.adapter.rooms["大廳"]);
-		
-		//console.log(statelist);
-		console.log("curent is "+curRoomName);
-		*/
     });
+	socket.on('drawing',function(data,list) {
+		io.in(curRoomName).emit('drawing', data);
+		io.in(curRoomName).emit('Room3', data);
+		io.emit('Roomlist3', roomidlist,themelist);
+		console.log(io.sockets.adapter.rooms[curRoomName]);
+	});
+	socket.on('pressed', function(key){
+		io.in(curRoomName).emit('PlayersMoving', key);//收到訊息後把清除的資料廣播到client端
+    });
+	io.emit('Roomlist3', roomidlist,themelist);
+
 	console.log("curent is "+curRoomName);
 });
 
 
-
-http.listen(port, () => {
+http.listen(port, function ()  {
   console.info('listen on %d', port);
 });
+function isRoomExist (roomName, roomList) {
+  return roomList[roomName] >= 0;
+}
