@@ -71,7 +71,6 @@
 </table>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-var socket1 = io();
 
 var array = [["Alfreds Futterkiste","Germany"],["Berglunds","Sweden"],["Island Trading","UK"]
 ,["Koniglich Essen","Germany"],["Laughing Bacchus Winecellars","Canada"],["Magazzini Alimentari Riuniti","Italy"]
@@ -80,9 +79,42 @@ var array = [["Alfreds Futterkiste","Germany"],["Berglunds","Sweden"],["Island T
 var array2;
 var themelist2;
 var search1=0,search2=0;
+	document.getElementById("myTable").innerHTML = "";
+	socket.emit('getroom',38);
+	socket.on('Roomlist3', function(roomidlist,themelist){
+		array2 = roomidlist;
+		themelist2 = themelist;
+	});
+	console.log(array2);
+	console.log(themelist2);
+	table = document.getElementById("myTable");
+    var header = table.createTHead();
+    var row = header.insertRow(0);
+    var celll = row.insertCell(0);
+	var celll2 = row.insertCell(1);
+    celll.innerHTML = "<b>RoomName</b>";
+	celll2.innerHTML = "<b>theme</b>";
+	for(var i = 0; i < array2.length; i++)
+	{
+		// create a new row
+		var newRow = table.insertRow(table.length);
+		for(var j = 0; j < 2; j++)
+		{
+		// create a new cell
+		var cell = newRow.insertCell(j);
+			// add value to the cell
+		if(j==0){
+			cell.innerHTML = array2[i];
+			}
+		else if(j==1){
+			cell.innerHTML = themelist2[i];
+			}		
+		}
+	}
 function roomlist() {
 	document.getElementById("myTable").innerHTML = "";
-	socket1.on('Roomlist3', function(roomidlist,themelist){
+	socket.emit('getroom',38);
+	socket.on('Roomlist3', function(roomidlist,themelist){
 		array2 = roomidlist;
 		themelist2 = themelist;
 	});
@@ -134,27 +166,7 @@ function myFunction3() {
   }
 }
 
-/*
-function myFunction() {
-  var input, filter, table, tr, td, i;
-  input = document.getElementById("myInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("myTable");
-  tr = table.getElementsByTagName("tr");
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
-      if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-	  search1=1;
-    }       
-  }
-}
 
-*/
 
 
 </script>
